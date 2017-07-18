@@ -210,6 +210,34 @@ catch:
 	print ("Check to see if two affine transformations are not equal ... fail.");
 end;
 
+### Multiply an affine transformation and a scaler.
+
+try
+	matT := Matrix([[2,0,0],[0,2,0],[0,0,2]]);
+	affT := Object ( AffineTransformation, matT, Vector([0,0,0]) );
+	affF := affT.affD;
+	affFtry := 2 . affD;
+	if AffineEqual ( affF, affFtry ) then
+		print ("Check to see if scaler premultiplication works ... pass.");
+	else print ("Check to see if scaler premultiplication works ... fail.");
+	fi;
+catch:
+	print ("Check to see if scaler premultiplication works ... fail.");
+end;
+
+try
+	matT := Matrix([[2,0,0],[0,2,0],[0,0,2]]);
+	affT := Object ( AffineTransformation, matT, Vector([0,0,0]) );
+	affF := affD.affT;
+	affFtry := affD.2;
+	if AffineEqual ( affF, affFtry ) then
+		print ("Check to see if scaler postmultiplication works ... pass.");
+	else print ("Check to see if scaler postmultiplication works ... fail.");
+	fi;
+catch:
+	print ("Check to see if scaler postmultiplication works ... fail.");
+end;
+	
 ## Get the +1 sized matrix for the affine transformation
 #try
 	# http://negativeprobability.blogspot.com/2011/11/affine-transformations-and-their.html

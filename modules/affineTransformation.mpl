@@ -118,6 +118,19 @@ module AffineTransformation() option object;
 				LinearAlgebra[MatrixVectorMultiply](matM, getTranslation(affA))
 			);
 		end proc,
+		ScalerAffineMultiply::static := proc (c::numeric, affA::AffineTransformation, $ )
+			:: AffineTransformation;
+			local matC::Matrix;
+			matC := MatrixScalarMultiply(LinearAlgebra[IdentityMatrix](affA:-AffineRowDimension(affA),affA:-AffineColumnDimension(affA)),c);
+			return (affA:-MatrixAffineMultiply(matC,affA));
+		end proc,
+		
+		AffineScalerMultiply::static := proc (affA::AffineTransformation, c::numeric, $)
+			:: AffineTransformation;
+			local matC::Matrix;
+			matC := MatrixScalarMultiply(LinearAlgebra[IdentityMatrix](affA:-AffineRowDimension(affA),affA:-AffineColumnDimension(affA)),c);
+			return (affA:-AffineMatrixMultiply(affA,matC));
+		end proc,
 		
 		AffineSelfMultiply::static := proc (affA::AffineTransformation, power::posint) :: AffineTransformation;
 			description "Multiplies an affine transformation by itself power times.";
@@ -156,6 +169,16 @@ module AffineTransformation() option object;
 				proc ( matM::Matrix, affA::AffineTransformation, $) :: AffineTransformation;
 					option overload;
 					return affA:-MatrixAffineMultiply (matM, affA);
+				end proc,
+				
+				proc ( c::numeric, affA::AffineTransformation, $ ) :: AffineTransformation;
+					option overload;
+					return affA:-ScalerAffineMultiply(c,affA);
+				end proc,
+				
+				proc (affA::AffineTransformation, c::numeric, $) :: AffineTransformation;
+					option overload;
+					return affA:-AffineScalerMultiply(affA,c);
 				end proc
 			]
 		),
