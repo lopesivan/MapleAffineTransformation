@@ -14,8 +14,7 @@
 
 module AffineTransformation() option object;
 
-	description "";
-	uses LinearAlgebra;
+	description "An affine transformation A from an m-dimensional space X to an n-dimensional space Y is an matrix M (with horizontal dimension m and vertical dimension n), and an n-vector v, so that A(x) = Mx + v.";
 	
 	local
 		linearPortion::Matrix,		#Matrix holding the linear portion of the Affine Transformation
@@ -84,6 +83,18 @@ module AffineTransformation() option object;
 		end proc,
 		
 		(**
+		 * Simplify overloaded
+		 * @TODO Make this (or something like it) work!
+		 *)
+		(**simplify::static := overload([
+			proc(self::AffineTransformation, $)::AffineTransformation;
+				option overload;
+				self:-linearPortion := simplify(self:-linearPortion);
+				self:-translationVector := simplify(self:-translationVector);
+				return (self);
+			end proc
+		]),*)
+		(**
 		 * Composes two affine transformations.
 		 *
 		 *)
@@ -99,7 +110,7 @@ module AffineTransformation() option object;
 		 *)
 		AffineVectorMultiply::static := proc ( affA::AffineTransformation, vectX::Vector, $ )
 			::Vector;
-			MatrixVectorMultiply ( getLinear( affA ) , vectX ) + getTranslation (affA);
+			simplify(MatrixVectorMultiply ( getLinear( affA ) , vectX ) + getTranslation (affA));
 		end proc,
 		(**
 		 * Lets you multiply a matrix and an affine transformation.
@@ -107,7 +118,7 @@ module AffineTransformation() option object;
 		AffineMatrixMultiply::static := proc (affA::AffineTransformation, matM::Matrix, $ )
 			:: AffineTransformation;
 			return Object ( AffineTransformation ,
-				LinearAlgebra[MatrixMatrixMultiply](getLinear(affA), matM ),
+				simplify(LinearAlgebra[MatrixMatrixMultiply](getLinear(affA), matM )),
 				getTranslation(affA)  #Plus zero vector
 			);
 		end proc,
@@ -186,7 +197,6 @@ module AffineTransformation() option object;
 		 * Inverts an affine transformation, returning a new AffineTransformation.
 		 *)
 		AffineInverse::static := proc ( self::AffineTransformation ) :: AffineTransformation;
-			uses LinearAlgebra;
 			local matInv :=  simplify(LinearAlgebra[MatrixInverse]( self:-linearPortion ));
 			#print (matInv);
 			local neg_matInv := LinearAlgebra[MatrixScalarMultiply](matInv,-1);
@@ -280,7 +290,7 @@ module AffineTransformation() option object;
 		 *)
 		dimensionChecker::static := proc ( linearPortion::Matrix, translationVector::Vector ) :: bool;
 			description "Checks whether or not the row dimension of the matrix is the same as the dimension of the translation vector.";
-			if RowDimension(linearPortion) = Dimension(translationVector) then
+			if LinearAlgebra[RowDimension](linearPortion) = LinearAlgebra[Dimension](translationVector) then
 				return true;
 			else return false;
 			fi;

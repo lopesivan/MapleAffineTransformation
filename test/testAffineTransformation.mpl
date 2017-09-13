@@ -337,9 +337,8 @@ end;
 
 try
 	affD:= Object(AffineTransformation,matrixD,vectorD);
-	affE := Object ( AffineTransformation, Matrix([[1,0,0],[0,1,0],[0,0,1]]),Vector([0,0,0]));
 	affEtest := affD^(0);
-	if (affE = affEtest) then
+	if (1 = affEtest) then
 		print ("Carrot zero ... pass.");
 	else print ("Carrot zero ... fail.");
 	fi;
@@ -366,4 +365,12 @@ try
 	fi;
 catch :
 	print ("Call as function ... pass");
-end;	
+end;
+# simplify an object
+#try
+#	affAtest := AffineTransformation( matrixA, vectorA );
+#	affAtest:-simplify(affAtest);
+#	print ("simplify ... pass");
+#catch :
+#	print ("simplify ... fail");
+#end try;
