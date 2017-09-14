@@ -101,8 +101,8 @@ module AffineTransformation() option object;
 		AffineAffineMultiply::static := proc ( affA::AffineTransformation, affB::AffineTransformation, $ ) :: AffineTransformation;
 			description "Composes two affine transformations, in the same order as matrix multiplication (reading right to left).";
 			return Object ( AffineTransformation , 
-				MatrixMatrixMultiply(getLinear(affA),getLinear(affB)),
-				getTranslation(affA) + MatrixVectorMultiply (getLinear(affA),getTranslation(affB) )
+				LinearAlgebra[MatrixMatrixMultiply](getLinear(affA),getLinear(affB)),
+				getTranslation(affA) + LinearAlgebra[MatrixVectorMultiply] (getLinear(affA),getTranslation(affB) )
 			);
 		end proc,
 		(**
@@ -110,7 +110,7 @@ module AffineTransformation() option object;
 		 *)
 		AffineVectorMultiply::static := proc ( affA::AffineTransformation, vectX::Vector, $ )
 			::Vector;
-			simplify(MatrixVectorMultiply ( getLinear( affA ) , vectX ) + getTranslation (affA));
+			simplify(LinearAlgebra[MatrixVectorMultiply] ( getLinear( affA ) , vectX ) + getTranslation (affA));
 		end proc,
 		(**
 		 * Lets you multiply a matrix and an affine transformation.
@@ -139,7 +139,7 @@ module AffineTransformation() option object;
 		AffineScalerMultiply::static := proc (affA::AffineTransformation, c::numeric, $)
 			:: AffineTransformation;
 			local matC::Matrix;
-			matC := MatrixScalarMultiply(LinearAlgebra[IdentityMatrix](affA:-AffineRowDimension(affA),affA:-AffineColumnDimension(affA)),c);
+			matC := LinearAlgebra[MatrixScalarMultiply](LinearAlgebra[IdentityMatrix](affA:-AffineRowDimension(affA),affA:-AffineColumnDimension(affA)),c);
 			return (affA:-AffineMatrixMultiply(affA,matC));
 		end proc,
 		
@@ -191,6 +191,11 @@ module AffineTransformation() option object;
 					option overload;
 					return affA:-AffineScalerMultiply(affA,c);
 				end proc
+				#,
+				#proc (a,b,$)
+				#	option overload;
+				#	error("got bad stuff", type(a, AffineTransformation), type(b, AffineTransformation));
+				#end proc
 			]
 		),
 		(**
@@ -214,28 +219,24 @@ module AffineTransformation() option object;
 		 *)
 		AffineDimension::static := proc ( self::AffineTransformation ) #what do you call the thing this returns?
 			description "Returns the dimension of the matrix containing the linear portion of the transformation";
-			uses LinearAlgebra;
-			return Dimension(self:-linearPortion);
+			return LinearAlgebra[Dimension](self:-linearPortion);
 		end proc,
 		AffineRowDimension::static := proc (self::AffineTransformation ) :: int;
 			description "Returns the row dimension of the affine transformation.";
-			uses LinearAlgebra;
-			return RowDimension(self:-linearPortion);
+			return LinearAlgebra[RowDimension](self:-linearPortion);
 		end proc,
 		AffineColumnDimension::static := proc ( self::AffineTransformation ) :: int;
 			description "Returns the column dimension of the affine transformation.";
-			uses LinearAlgebra;
-			return ColumnDimension(self:-linearPortion);
+			return LinearAlgebra[ColumnDimension](self:-linearPortion);
 		end proc,
 		(**
 		 * Equal Function
 		 *)
 		AffineEqual::static := proc ( affA::AffineTransformation, affB::AffineTransformation ) :: bool;
 		 	description "Checks to see if two Affine Transformations are equal.";
-		 	uses LinearAlgebra;
 		 	if (
-		 		Equal(affA:-linearPortion,affB:-linearPortion) and 
-		 		Equal(affA:-translationVector, affB:-translationVector)
+		 		LinearAlgebra[Equal](affA:-linearPortion,affB:-linearPortion) and 
+		 		LinearAlgebra[Equal](affA:-translationVector, affB:-translationVector)
 		 	) then
 		 		return true;
 		 	else
@@ -271,8 +272,9 @@ module AffineTransformation() option object;
 						#	LinearAlgebra[IndentityMatrix](affA:-AffineRowDimension(affA),affA:-AffineColumnDimension(affA)),
 						#	LinearAlgebra[ZeroVector](affA:-AffineRowDimension(affA))	
 						#	));
-						error("ugly");
-					elif ( power > 0 ) then
+						#error("ugly");
+						#Case is never read because of the way Maple works...it will always the scalar 1
+						elif ( power > 0 ) then
 						return (affA:-AffineSelfMultiply(affA,power));
 					elif (power < 0 ) then
 						return (affA:-AffineSelfMultiply(affA:-AffineInverse(affA), -1 * power));
