@@ -132,7 +132,7 @@ module AffineTransformation() option object;
 		ScalerAffineMultiply::static := proc (c::numeric, affA::AffineTransformation, $ )
 			:: AffineTransformation;
 			local matC::Matrix;
-			matC := MatrixScalarMultiply(LinearAlgebra[IdentityMatrix](affA:-AffineRowDimension(affA),affA:-AffineColumnDimension(affA)),c);
+			matC := LinearAlgebra[MatrixScalarMultiply](LinearAlgebra[IdentityMatrix](affA:-AffineRowDimension(affA),affA:-AffineColumnDimension(affA)),c);
 			return (affA:-MatrixAffineMultiply(matC,affA));
 		end proc,
 		
@@ -182,7 +182,7 @@ module AffineTransformation() option object;
 					return affA:-MatrixAffineMultiply (matM, affA);
 				end proc,
 				
-				proc ( c::numeric, affA::AffineTransformation, $ ) :: AffineTransformation;
+				proc ( c::numeric, affA::AffineTransformation ) :: AffineTransformation;
 					option overload;
 					return affA:-ScalerAffineMultiply(c,affA);
 				end proc,
