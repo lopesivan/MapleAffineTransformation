@@ -2,6 +2,7 @@
 # -q
 (***
  * Test script for the AffineTransformation class
+ * @author Scott Grizzard <sgrizzar@mail.usf.edu>
  *)
 printlevel := -1;
 
@@ -35,6 +36,7 @@ vectorD := Vector([0,-1,-2]);
 
 matrixE := matrixD;
 vectorE := Vector([0,0,0]);
+	
 
 ## Build a AffineTransformation with the correct dimensions
 try 
@@ -237,46 +239,6 @@ try
 catch:
 	print ("Check to see if scaler postmultiplication works ... fail.");
 end;
-	
-## Get the +1 sized matrix for the affine transformation
-#try
-	# http://negativeprobability.blogspot.com/2011/11/affine-transformations-and-their.html
-#	if Equal(MakeLinear( affA ),linearedA) then
-#		print("MakeLinear ... pass.");
-#	else
-#		print("MakeLinear ... fail.");
-#	fi;
-#catch :
-#	print("MakeLinear ... fail.")
-#end;
-
-## Build an affine transformation from a single, "+1" matrix.
-#try
-#	affACopy := CreateFromLargerLinear( AffineTransformation, linearedA );
-#	if Equal(linearedA, MakeLinear(affACopy)) then
-#		print ( "CreateFromLargerLinear ... pass." );
-#	else
-#		print ( "CreateFromLargerLinear ... fail.");
-#	fi;
-#catch :
-#	print("CreateFromLargerLinear ... fail.");
-#end;
-
-## Try to build an affine transformation from an "incorrect", "+1" matrix.
-#   not sure if this is right...or what we want to do.  Is there something
-#	"like" the Jordan-normal form, where the lower-right entry is a one,
-#	and all other entries on the bottom row are zero?
-
-## Check to see if a matrix is an affine transformation.
-#try
-#	if isLargeAffine ( AffineTransformation, linearedA ) then
-#		print ( "isLargeAffine ... pass." );
-#	else
-#		print ( "isLargeAffine ... fail." );
-#	fi;
-#catch :
-#	print("isLargeAffine ... fail.");
-#end;
 
 ## Invert an affine transformation
 try
@@ -350,27 +312,19 @@ end;
 try
 	affAtest:= Object (AffineTransformation, vectorA, matrixA);
 	if (affAtest = affA) then
-		print ("Construct in reverse order ... pass");
-	else ("Construct in reverse order ... fail");
+		print ("Construct in reverse order ... pass.");
+	else ("Construct in reverse order ... fail.");
 	fi;
 catch :
-	print ("Construct in reverse order ... fail");
+	print ("Construct in reverse order ... fail.");
 end;
 # Create an affine transformation with overloaded function caller
 try
 	affAtest := AffineTransformation( matrixA, vectorA );
 	if (affAtest = affA) then
-		print ("Call as function ... pass");
-	else ("Call as function ... pass");
+		print ("Call as function ... pass.");
+	else ("Call as function ... fail.");
 	fi;
 catch :
-	print ("Call as function ... pass");
+	print ("Call as function ... fail.");
 end;
-# simplify an object
-#try
-#	affAtest := AffineTransformation( matrixA, vectorA );
-#	affAtest:-simplify(affAtest);
-#	print ("simplify ... pass");
-#catch :
-#	print ("simplify ... fail");
-#end try;

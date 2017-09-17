@@ -1,4 +1,4 @@
-(***** Node Object
+(***** AffineTransformation Object
  * @author Scott Grizzard <sgrizzar@mail.usf.edu>
  *
  * An affine transformation A from an m-dimensional space X to an n-dimensional space Y
@@ -8,8 +8,6 @@
  * Composition (multiplication) of two affine transformations is read
  * right to left (as matrix multiplication is).
  *
- * @todo add support for immutable AffineTransformations.
- * @TODO add print support.
 **)
 
 module AffineTransformation() option object;
